@@ -1,70 +1,92 @@
-# Getting Started with Create React App
+# LifeSigortam.net - Production Deployment Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 🚀 Kurulum Adımları
 
-## Available Scripts
+### 1. Dosyaları Sunucuya Yükleyin
+```bash
+# Proje zip dosyasını sunucuya yükleyin ve çıkartın
+unzip lifesigortam-production.zip
+cd lifesigortam-production
+```
 
-In the project directory, you can run:
+### 2. Deployment Script'i Çalıştırın
+```bash
+# Script'i çalıştırılabilir yapın
+chmod +x deploy.sh
+chmod +x build.sh
 
-### `npm start`
+# Deployment'ı başlatın
+sudo ./deploy.sh
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 3. SSL Sertifikası Kurulumu
+```bash
+# Let's Encrypt SSL sertifikası
+sudo certbot --nginx -d lifesigortam.net -d www.lifesigortam.net
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### 4. DNS Ayarları
+Domain sağlayıcınızda aşağıdaki kayıtları ekleyin:
+```
+A    lifesigortam.net      -> [SUNUCU_IP]
+A    www.lifesigortam.net  -> [SUNUCU_IP]
+```
 
-### `npm test`
+## 📁 Dizin Yapısı
+```
+/opt/www/lifesigortam/
+├── build/              # Production build dosyaları
+├── src/               # React kaynak kodları
+├── public/            # Statik dosyalar
+├── package.json       # NPM bağımlılıkları
+└── ...
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🔧 Nginx Konfigürasyonu
+- Config dosyası: `/etc/nginx/sites-available/lifesigortam.net`
+- Aktif: `/etc/nginx/sites-enabled/lifesigortam.net`
 
-### `npm run build`
+## 🔄 Güncelleme
+```bash
+# Nginx'i yeniden başlatma
+sudo systemctl reload nginx
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Build'i yeniden oluşturma
+cd /opt/www/lifesigortam
+npm run build
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛡️ Güvenlik
+- SSL sertifikası otomatik yenilenir
+- Firewall ayarları yapılmıştır
+- Güvenlik başlıkları eklenmiştir
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📊 Monitoring
+```bash
+# Nginx logları
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
 
-### `npm run eject`
+# Nginx durumu
+sudo systemctl status nginx
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🎯 Özellikler
+- ✅ Responsive tasarım
+- ✅ SEO optimizasyonu
+- ✅ Gzip sıkıştırma
+- ✅ Cache optimizasyonu
+- ✅ Güvenlik başlıkları
+- ✅ SSL hazır
+- ✅ Admin paneli (/admin)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🔐 Admin Panel
+- URL: https://lifesigortam.net/admin
+- Kullanıcı: admin
+- Şifre: admin123
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📞 Destek
+Teknik destek için: info@lifesigortam.net
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+**LifeSigortam.net - Türkiye'nin Güvenilir Hayat Sigortası Platformu**
