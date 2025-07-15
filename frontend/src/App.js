@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { SiteProvider } from "./context/SiteContext";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import ServicesPage from "./pages/ServicesPage";
@@ -12,22 +13,24 @@ import "./App.css";
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <main className="min-h-screen">
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/hakkimizda" element={<AboutPage />} />
-            <Route path="/hizmetlerimiz" element={<ServicesPage />} />
-            <Route path="/iletisim" element={<ContactPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/admin" element={<AdminPanel />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <SiteProvider>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <main className="min-h-screen">
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/hakkimizda" element={<AboutPage />} />
+              <Route path="/hizmetlerimiz" element={<ServicesPage />} />
+              <Route path="/iletisim" element={<ContactPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/admin" element={<AdminPanel />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
+      </Router>
+    </SiteProvider>
   );
 }
 
