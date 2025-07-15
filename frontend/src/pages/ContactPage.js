@@ -11,12 +11,28 @@ const ContactPage = () => {
     message: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Form gönderme işlemi burada yapılacak
-    console.log('Form data:', formData);
-    alert('Mesajınız başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.');
-    setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+    
+    // Form validation
+    if (!formData.name || !formData.email || !formData.phone || !formData.message) {
+      alert('Lütfen tüm gerekli alanları doldurunuz.');
+      return;
+    }
+    
+    try {
+      // Form gönderme işlemi burada yapılacak
+      console.log('Form data:', formData);
+      
+      // Simüle edilmiş API çağrısı
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      alert('Mesajınız başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.');
+      setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+      
+    } catch (error) {
+      alert('Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.');
+    }
   };
 
   const handleChange = (e) => {
