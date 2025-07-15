@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import AboutPage from "./pages/AboutPage";
 import ServicesPage from "./pages/ServicesPage";
@@ -12,10 +12,10 @@ import "./App.css";
 
 function App() {
   return (
-    <div className="App">
-      <BrowserRouter>
+    <Router>
+      <div className="App">
         <Navbar />
-        <main>
+        <main className="min-h-screen">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/hakkimizda" element={<AboutPage />} />
@@ -26,8 +26,8 @@ function App() {
           </Routes>
         </main>
         <Footer />
-      </BrowserRouter>
-    </div>
+      </div>
+    </Router>
   );
 }
 
