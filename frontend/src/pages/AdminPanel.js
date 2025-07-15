@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   BarChart3, 
@@ -26,25 +26,62 @@ const AdminPanel = () => {
 
   // Site verileri için local state
   const [siteSettings, setSiteSettings] = useState({
-    companyName: siteData.companyName,
-    companySubtitle: siteData.companySubtitle,
-    heroTitle: siteData.heroTitle,
-    heroSubtitle: siteData.heroSubtitle,
-    phone: siteData.phone,
-    email: siteData.email,
-    address: siteData.address,
-    workingHours: siteData.workingHours,
-    stats: { ...siteData.stats }
+    companyName: '',
+    companySubtitle: '',
+    heroTitle: '',
+    heroSubtitle: '',
+    phone: '',
+    email: '',
+    address: '',
+    workingHours: '',
+    stats: { customers: '', experience: '', team: '', satisfaction: '' }
   });
+
+  // Site verilerini load et
+  useEffect(() => {
+    if (siteData) {
+      setSiteSettings({
+        companyName: siteData.companyName || 'TrustLife',
+        companySubtitle: siteData.companySubtitle || 'Hayat Sigortası',
+        heroTitle: siteData.heroTitle || 'Ailenizin Geleceğini Güvence Altına Alın',
+        heroSubtitle: siteData.heroSubtitle || 'Türkiye\'nin güvenilir hayat sigortası acentesi',
+        phone: siteData.phone || '0850 123 45 67',
+        email: siteData.email || 'info@trustlife.com.tr',
+        address: siteData.address || 'Levent Mahallesi, Büyükdere Cd. No:185, 34394 Şişli/İstanbul',
+        workingHours: siteData.workingHours || 'Pazartesi - Cuma: 09:00 - 18:00',
+        stats: {
+          customers: siteData.stats?.customers || '10,000+',
+          experience: siteData.stats?.experience || '15+',
+          team: siteData.stats?.team || '50+',
+          satisfaction: siteData.stats?.satisfaction || '99%'
+        }
+      });
+    }
+  }, [siteData]);
+
+  // Local storage'dan auth durumunu kontrol et
+  useEffect(() => {
+    const authStatus = localStorage.getItem('adminAuth');
+    if (authStatus === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
     // Basit authentication - production'da güvenli authentication kullanın
     if (loginData.username === 'admin' && loginData.password === 'admin123') {
       setIsAuthenticated(true);
+      localStorage.setItem('adminAuth', 'true');
     } else {
       alert('Geçersiz kullanıcı adı veya şifre');
     }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('adminAuth');
+    setActiveTab('dashboard');
   };
 
   const handleSiteSettingsChange = (field, value) => {
@@ -67,7 +104,7 @@ const AdminPanel = () => {
 
   const saveSiteSettings = () => {
     updateSiteData(siteSettings);
-    alert('Site ayarları başarıyla güncellendi!');
+    alert('Site ayarları başarıyla güncellendi! Değişikliklerin sitede görünmesi için sayfayı yenileyin.');
   };
 
   const stats = [
@@ -192,7 +229,7 @@ const AdminPanel = () => {
           
           <div className="absolute bottom-6 left-6 right-6">
             <button
-              onClick={() => setIsAuthenticated(false)}
+              onClick={handleLogout}
               className="w-full text-left text-red-600 hover:text-red-700 font-medium"
             >
               Çıkış Yap
@@ -301,6 +338,7 @@ const AdminPanel = () => {
                         value={siteSettings.companyName}
                         onChange={(e) => handleSiteSettingsChange('companyName', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Şirket adını giriniz"
                       />
                     </div>
                     <div>
@@ -312,6 +350,7 @@ const AdminPanel = () => {
                         value={siteSettings.companySubtitle}
                         onChange={(e) => handleSiteSettingsChange('companySubtitle', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Alt başlığı giriniz"
                       />
                     </div>
                     <div>
@@ -323,6 +362,7 @@ const AdminPanel = () => {
                         value={siteSettings.heroTitle}
                         onChange={(e) => handleSiteSettingsChange('heroTitle', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Ana sayfa başlığı"
                       />
                     </div>
                     <div>
@@ -334,6 +374,7 @@ const AdminPanel = () => {
                         onChange={(e) => handleSiteSettingsChange('heroSubtitle', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         rows="3"
+                        placeholder="Ana sayfa açıklaması"
                       />
                     </div>
                   </div>
@@ -352,6 +393,7 @@ const AdminPanel = () => {
                         value={siteSettings.phone}
                         onChange={(e) => handleSiteSettingsChange('phone', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Telefon numaranız"
                       />
                     </div>
                     <div>
@@ -363,6 +405,7 @@ const AdminPanel = () => {
                         value={siteSettings.email}
                         onChange={(e) => handleSiteSettingsChange('email', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="E-posta adresiniz"
                       />
                     </div>
                     <div>
@@ -374,6 +417,7 @@ const AdminPanel = () => {
                         onChange={(e) => handleSiteSettingsChange('address', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                         rows="3"
+                        placeholder="Adres bilgileriniz"
                       />
                     </div>
                     <div>
@@ -385,6 +429,7 @@ const AdminPanel = () => {
                         value={siteSettings.workingHours}
                         onChange={(e) => handleSiteSettingsChange('workingHours', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="Çalışma saatleri"
                       />
                     </div>
                   </div>
@@ -403,6 +448,7 @@ const AdminPanel = () => {
                         value={siteSettings.stats.customers}
                         onChange={(e) => handleSiteSettingsChange('stats.customers', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="10,000+"
                       />
                     </div>
                     <div>
@@ -414,6 +460,7 @@ const AdminPanel = () => {
                         value={siteSettings.stats.experience}
                         onChange={(e) => handleSiteSettingsChange('stats.experience', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="15+"
                       />
                     </div>
                     <div>
@@ -425,6 +472,7 @@ const AdminPanel = () => {
                         value={siteSettings.stats.team}
                         onChange={(e) => handleSiteSettingsChange('stats.team', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="50+"
                       />
                     </div>
                     <div>
@@ -436,6 +484,7 @@ const AdminPanel = () => {
                         value={siteSettings.stats.satisfaction}
                         onChange={(e) => handleSiteSettingsChange('stats.satisfaction', e.target.value)}
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        placeholder="99%"
                       />
                     </div>
                   </div>
