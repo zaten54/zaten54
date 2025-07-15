@@ -15,14 +15,16 @@ function App() {
     <div className="App">
       <BrowserRouter>
         <Navbar />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/hakkimizda" element={<AboutPage />} />
-          <Route path="/hizmetlerimiz" element={<ServicesPage />} />
-          <Route path="/iletisim" element={<ContactPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/admin" element={<AdminPanel />} />
-        </Routes>
+        <main>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/hakkimizda" element={<AboutPage />} />
+            <Route path="/hizmetlerimiz" element={<ServicesPage />} />
+            <Route path="/iletisim" element={<ContactPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/admin" element={<AdminPanel />} />
+          </Routes>
+        </main>
         <Footer />
       </BrowserRouter>
     </div>
