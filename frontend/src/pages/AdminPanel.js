@@ -12,13 +12,30 @@ import {
   Edit,
   Trash2,
   Eye,
-  Download
+  Download,
+  Save,
+  Globe
 } from 'lucide-react';
+import { useSite } from '../context/SiteContext';
 
 const AdminPanel = () => {
+  const { siteData, updateSiteData } = useSite();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginData, setLoginData] = useState({ username: '', password: '' });
+
+  // Site verileri için local state
+  const [siteSettings, setSiteSettings] = useState({
+    companyName: siteData.companyName,
+    companySubtitle: siteData.companySubtitle,
+    heroTitle: siteData.heroTitle,
+    heroSubtitle: siteData.heroSubtitle,
+    phone: siteData.phone,
+    email: siteData.email,
+    address: siteData.address,
+    workingHours: siteData.workingHours,
+    stats: { ...siteData.stats }
+  });
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -28,6 +45,29 @@ const AdminPanel = () => {
     } else {
       alert('Geçersiz kullanıcı adı veya şifre');
     }
+  };
+
+  const handleSiteSettingsChange = (field, value) => {
+    if (field.includes('.')) {
+      const [parent, child] = field.split('.');
+      setSiteSettings(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value
+        }
+      }));
+    } else {
+      setSiteSettings(prev => ({
+        ...prev,
+        [field]: value
+      }));
+    }
+  };
+
+  const saveSiteSettings = () => {
+    updateSiteData(siteSettings);
+    alert('Site ayarları başarıyla güncellendi!');
   };
 
   const stats = [
@@ -53,6 +93,7 @@ const AdminPanel = () => {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+    { id: 'site-settings', label: 'Site Ayarları', icon: Globe },
     { id: 'customers', label: 'Müşteriler', icon: Users },
     { id: 'applications', label: 'Başvurular', icon: FileText },
     { id: 'blog', label: 'Blog Yönetimi', icon: Edit },
@@ -232,6 +273,176 @@ const AdminPanel = () => {
               </div>
             </div>
           )}
+
+          {activeTab === 'site-settings' && (
+            <div className="space-y-8">
+              <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold text-gray-900">Site Ayarları</h1>
+                <button 
+                  onClick={saveSiteSettings}
+                  className="btn-primary"
+                >
+                  <Save className="w-5 h-5" />
+                  Ayarları Kaydet
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Temel Bilgiler */}
+                <div className="bg-white rounded-xl shadow-premium p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Temel Bilgiler</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Şirket Adı
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.companyName}
+                        onChange={(e) => handleSiteSettingsChange('companyName', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Şirket Alt Başlığı
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.companySubtitle}
+                        onChange={(e) => handleSiteSettingsChange('companySubtitle', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ana Sayfa Başlığı
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.heroTitle}
+                        onChange={(e) => handleSiteSettingsChange('heroTitle', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ana Sayfa Alt Açıklaması
+                      </label>
+                      <textarea
+                        value={siteSettings.heroSubtitle}
+                        onChange={(e) => handleSiteSettingsChange('heroSubtitle', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows="3"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* İletişim Bilgileri */}
+                <div className="bg-white rounded-xl shadow-premium p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-6">İletişim Bilgileri</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Telefon
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.phone}
+                        onChange={(e) => handleSiteSettingsChange('phone', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        E-posta
+                      </label>
+                      <input
+                        type="email"
+                        value={siteSettings.email}
+                        onChange={(e) => handleSiteSettingsChange('email', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Adres
+                      </label>
+                      <textarea
+                        value={siteSettings.address}
+                        onChange={(e) => handleSiteSettingsChange('address', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        rows="3"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Çalışma Saatleri
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.workingHours}
+                        onChange={(e) => handleSiteSettingsChange('workingHours', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* İstatistikler */}
+                <div className="bg-white rounded-xl shadow-premium p-6 lg:col-span-2">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-6">Site İstatistikleri</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Müşteri Sayısı
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.stats.customers}
+                        onChange={(e) => handleSiteSettingsChange('stats.customers', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Deneyim Yılı
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.stats.experience}
+                        onChange={(e) => handleSiteSettingsChange('stats.experience', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ekip Sayısı
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.stats.team}
+                        onChange={(e) => handleSiteSettingsChange('stats.team', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Memnuniyet Oranı
+                      </label>
+                      <input
+                        type="text"
+                        value={siteSettings.stats.satisfaction}
+                        onChange={(e) => handleSiteSettingsChange('stats.satisfaction', e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           
           {activeTab === 'applications' && (
             <div className="space-y-6">
@@ -333,82 +544,6 @@ const AdminPanel = () => {
                         </div>
                       </div>
                     ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {activeTab === 'settings' && (
-            <div className="space-y-6">
-              <h1 className="text-3xl font-bold text-gray-900">Ayarlar</h1>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl shadow-premium p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Site Ayarları</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Site Başlığı
-                      </label>
-                      <input
-                        type="text"
-                        defaultValue="TrustLife Hayat Sigortası"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Site Açıklaması
-                      </label>
-                      <textarea
-                        defaultValue="Türkiye'nin güvenilir hayat sigortası acentesi"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        rows="3"
-                      />
-                    </div>
-                    <button className="btn-primary">
-                      Ayarları Kaydet
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-xl shadow-premium p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">İletişim Bilgileri</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Telefon
-                      </label>
-                      <input
-                        type="text"
-                        defaultValue="0850 123 45 67"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        E-posta
-                      </label>
-                      <input
-                        type="email"
-                        defaultValue="info@trustlife.com.tr"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Adres
-                      </label>
-                      <textarea
-                        defaultValue="Levent Mahallesi, Büyükdere Cd. No:185, 34394 Şişli/İstanbul"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        rows="3"
-                      />
-                    </div>
-                    <button className="btn-primary">
-                      Bilgileri Güncelle
-                    </button>
                   </div>
                 </div>
               </div>
