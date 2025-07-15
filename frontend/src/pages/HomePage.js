@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Users, Award, TrendingUp, Phone, ArrowRight, Check, Star } from 'lucide-react';
+import { useSite } from '../context/SiteContext';
+import QuoteModal from '../components/QuoteModal';
 
 const HomePage = () => {
+  const { siteData } = useSite();
+  const [isQuoteModalOpen, setIsQuoteModalOpen] = useState(false);
+
+  const openQuoteModal = () => {
+    setIsQuoteModalOpen(true);
+  };
+
+  const closeQuoteModal = () => {
+    setIsQuoteModalOpen(false);
+  };
+
   const services = [
     {
       icon: Shield,
@@ -31,10 +44,10 @@ const HomePage = () => {
   ];
 
   const stats = [
-    { number: '10,000+', label: 'Mutlu Müşteri' },
-    { number: '15+', label: 'Yıllık Deneyim' },
-    { number: '50+', label: 'Uzman Ekip' },
-    { number: '99%', label: 'Müşteri Memnuniyeti' }
+    { number: siteData.stats.customers, label: 'Mutlu Müşteri' },
+    { number: siteData.stats.experience, label: 'Yıllık Deneyim' },
+    { number: siteData.stats.team, label: 'Uzman Ekip' },
+    { number: siteData.stats.satisfaction, label: 'Müşteri Memnuniyeti' }
   ];
 
   const testimonials = [
@@ -84,25 +97,24 @@ const HomePage = () => {
             className="space-y-6"
           >
             <h1 className="heading-xl text-white">
-              Ailenizin Geleceğini
-              <span className="block text-gradient bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-                Güvence Altına Alın
-              </span>
+              {siteData.heroTitle}
             </h1>
             
             <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-              Türkiye'nin güvenilir hayat sigortası acentesi ile birlikte, sevdikleriniz için en iyi koruma planlarını keşfedin. 
-              Uzman ekibimiz size özel çözümler sunar.
+              {siteData.heroSubtitle}
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-              <button className="btn-primary text-lg px-8 py-4">
+              <button 
+                onClick={openQuoteModal}
+                className="btn-primary text-lg px-8 py-4"
+              >
                 <Shield className="w-5 h-5" />
                 Ücretsiz Teklif Al
               </button>
               <button className="btn-secondary text-lg px-8 py-4">
                 <Phone className="w-5 h-5" />
-                0850 123 45 67
+                {siteData.phone}
               </button>
             </div>
           </motion.div>
@@ -169,8 +181,11 @@ const HomePage = () => {
                 <div className="p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">{service.title}</h3>
                   <p className="text-gray-600 mb-4">{service.description}</p>
-                  <button className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2">
-                    Detaylar
+                  <button 
+                    onClick={openQuoteModal}
+                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-2"
+                  >
+                    Teklif Al
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -190,10 +205,10 @@ const HomePage = () => {
               className="space-y-6"
             >
               <h2 className="heading-lg text-gray-900">
-                Neden TrustLife?
+                Neden {siteData.companyName}?
               </h2>
               <p className="text-xl text-gray-600">
-                15 yıllık deneyimimiz ve güvenilir hizmet anlayışımızla yanınızdayız.
+                {siteData.stats.experience} yıllık deneyimimiz ve güvenilir hizmet anlayışımızla yanınızdayız.
               </p>
               
               <div className="space-y-4">
@@ -211,8 +226,11 @@ const HomePage = () => {
                 ))}
               </div>
               
-              <button className="btn-primary mt-6">
-                Daha Fazla Bilgi
+              <button 
+                onClick={openQuoteModal}
+                className="btn-primary mt-6"
+              >
+                Teklif Al
               </button>
             </motion.div>
             
@@ -297,7 +315,10 @@ const HomePage = () => {
               Ücretsiz danışmanlık hizmeti alın ve size en uygun sigorta planını keşfedin.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-              <button className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors">
+              <button 
+                onClick={openQuoteModal}
+                className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 rounded-lg font-semibold transition-colors"
+              >
                 Hemen Başlayın
               </button>
               <button className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-lg font-semibold transition-colors">
@@ -307,6 +328,12 @@ const HomePage = () => {
           </motion.div>
         </div>
       </section>
+
+      {/* Quote Modal */}
+      <QuoteModal 
+        isOpen={isQuoteModalOpen}
+        onClose={closeQuoteModal}
+      />
     </div>
   );
 };
