@@ -24,30 +24,53 @@ const QuoteModal = ({ isOpen, onClose }) => {
     });
   };
 
+  const sendQuoteEmail = async (formData) => {
+    try {
+      const response = await fetch('/api/send-quote-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ formData })
+      });
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Email gönderimi hatası:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simüle edilmiş form gönderimi
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // E-posta gönderimi
+      const emailResult = await sendQuoteEmail(formData);
       
-      alert('Teklif talebiniz başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.');
-      
-      // Form'u sıfırla
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        birthDate: '',
-        gender: '',
-        insuranceType: '',
-        coverage: '',
-        message: ''
-      });
-      setStep(1);
-      onClose();
+      if (emailResult.success) {
+        alert('Teklif talebiniz başarıyla gönderildi! En kısa sürede sizinle iletişime geçeceğiz.');
+        
+        // Form'u sıfırla
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          birthDate: '',
+          gender: '',
+          insuranceType: '',
+          coverage: '',
+          message: ''
+        });
+        setStep(1);
+        onClose();
+      } else {
+        alert('Teklif gönderimi sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+      }
     } catch (error) {
+      console.error('Form submission error:', error);
       alert('Bir hata oluştu. Lütfen tekrar deneyin.');
     } finally {
       setIsSubmitting(false);
@@ -336,7 +359,7 @@ const QuoteModal = ({ isOpen, onClose }) => {
                 
                 <div className="bg-blue-50 rounded-lg p-4">
                   <p className="text-sm text-blue-800">
-                    <strong>Bilgilendirme:</strong> Teklif talebiniz uzman ekibimiz tarafından değerlendirilecek ve 24 saat içinde sizinle iletişime geçilecektir.
+                    <strong>Bilgilendirme:</strong> Teklif talebiniz uzman ekibimiz tarafından değerlendirilecek ve 24 saat içinde sizinle iletişime geçilecektir. Ayrıca talebiniz noreply@lifesigortam.net adresine e-posta olarak gönderilecektir.
                   </p>
                 </div>
               </div>
@@ -373,7 +396,7 @@ const QuoteModal = ({ isOpen, onClose }) => {
                   {isSubmitting ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      Gönderiliyor...
+                      E-posta Gönderiliyor...
                     </div>
                   ) : (
                     <>
