@@ -28,12 +28,19 @@ echo "🏗️  Build script çalıştırılıyor..."
 echo "🔍 Nginx durumu kontrol ediliyor..."
 sudo systemctl status nginx
 
+# Email servisi durumunu kontrol et
+echo "📧 Email servisi durumu kontrol ediliyor..."
+sudo systemctl status lifesigortam-email
+
 # Firewall ayarları
 echo "🔥 Firewall ayarları yapılıyor..."
 sudo ufw allow 'Nginx Full'
 sudo ufw allow ssh
+sudo ufw allow 3001/tcp
 sudo ufw --force enable
 
 echo "✅ Deployment tamamlandı!"
 echo "🌐 Website: http://lifesigortam.net"
+echo "📧 Email Service: Port 3001"
 echo "📝 SSL için: sudo certbot --nginx -d lifesigortam.net -d www.lifesigortam.net"
+echo "🔍 Email servisi logları: sudo journalctl -u lifesigortam-email -f"
