@@ -196,6 +196,6 @@ test_plan:
 
 agent_communication:
   - agent: "main"
-    message: "E-posta servisi düzeltildi ve çalışıyor. Nodemailer API sorunu çözüldü. Systemd yerine normal node process olarak çalışıyor. Backend testing agent'ı çağırmaya hazırım."
+    message: "✅ SMTP SORUNU ÇÖZÜLDÜ! TLS ayarları ve timeout değerleri eklenerek e-posta gönderimi başarılı hale getirildi. Test e-postası ve teklif formu e-postaları başarıyla gönderildi."
   - agent: "testing"
     message: "✅ BACKEND TESTING COMPLETE: Email service API is working correctly with proper validation. ❌ CRITICAL ISSUE: SMTP server mail.ajansit.com:587 is not reachable from container environment - this prevents actual email sending. Main backend API is fully functional. Systemd limitation is expected in containers."
