@@ -29,7 +29,7 @@ if [ ! -d "$PROJECT_DIR" ]; then
 fi
 
 echo -e "${BLUE}📦 Proje dosyaları kopyalanıyor...${NC}"
-cp -r frontend/* "$PROJECT_DIR/"
+cp -r . "$PROJECT_DIR/"
 
 echo -e "${BLUE}🏗️  Build dizinine geçiliyor...${NC}"
 cd "$PROJECT_DIR"
@@ -43,6 +43,10 @@ npm install
 
 echo -e "${BLUE}🔧 Production build oluşturuluyor...${NC}"
 npm run build
+
+echo -e "${BLUE}📧 Email servisi kuruluyor...${NC}"
+# Email servisi için gerekli dependencies
+npm install express nodemailer cors
 
 echo -e "${BLUE}🌐 Nginx konfigürasyonu hazırlanıyor...${NC}"
 
@@ -83,21 +87,21 @@ server {
         add_header X-Content-Type-Options "nosniff";
     }
     
+    # API proxy for email service
+    location /api/ {
+        proxy_pass http://localhost:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
     # Main location for React app
     location / {
         try_files $uri $uri/ /index.html;
         add_header Cache-Control "no-cache, no-store, must-revalidate";
         add_header Pragma "no-cache";
         add_header Expires "0";
-    }
-    
-    # API proxy (if needed in future)
-    location /api {
-        proxy_pass http://localhost:8001;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
     }
     
     # Security: Hide nginx version
@@ -116,6 +120,31 @@ sudo ln -sf "$NGINX_DIR/lifesigortam.net" "$NGINX_ENABLED/lifesigortam.net"
 echo -e "${BLUE}🧪 Nginx konfigürasyonu test ediliyor...${NC}"
 sudo nginx -t
 
+echo -e "${BLUE}📧 Email servisi başlatılıyor...${NC}"
+# Email servisi için systemd service dosyası oluştur
+cat > "/etc/systemd/system/lifesigortam-email.service" << EOF
+[Unit]
+Description=LifeSigortam Email Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=$PROJECT_DIR
+ExecStart=/usr/bin/node email-service.js
+Restart=always
+RestartSec=5
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Systemd service'i etkinleştir
+sudo systemctl daemon-reload
+sudo systemctl enable lifesigortam-email
+sudo systemctl start lifesigortam-email
+
 echo -e "${BLUE}🔄 Nginx yeniden başlatılıyor...${NC}"
 sudo systemctl reload nginx
 
@@ -127,10 +156,16 @@ echo -e "${GREEN}✅ Build tamamlandı!${NC}"
 echo -e "${GREEN}🌐 Website: http://lifesigortam.net${NC}"
 echo -e "${GREEN}📁 Dosya yolu: $PROJECT_DIR${NC}"
 echo -e "${GREEN}🔧 Build dosyaları: $BUILD_DIR${NC}"
+echo -e "${GREEN}📧 Email servisi: Port 3001${NC}"
+
+echo -e "${YELLOW}📝 Servis durumları:${NC}"
+echo -e "${YELLOW}🌐 Nginx: $(sudo systemctl is-active nginx)${NC}"
+echo -e "${YELLOW}📧 Email Service: $(sudo systemctl is-active lifesigortam-email)${NC}"
 
 echo -e "${YELLOW}📝 Sonraki adımlar:${NC}"
 echo -e "${YELLOW}1. DNS ayarlarını lifesigortam.net domain'i için yapılandırın${NC}"
 echo -e "${YELLOW}2. SSL sertifikası için: sudo certbot --nginx -d lifesigortam.net -d www.lifesigortam.net${NC}"
 echo -e "${YELLOW}3. Firewall ayarları: sudo ufw allow 'Nginx Full'${NC}"
+echo -e "${YELLOW}4. Email servisi logları: sudo journalctl -u lifesigortam-email -f${NC}"
 
-echo -e "${GREEN}🎉 LifeSigortam.net hazır!${NC}"
+echo -e "${GREEN}🎉 LifeSigortam.net E-posta Sistemi ile hazır!${NC}"
