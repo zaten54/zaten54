@@ -131,6 +131,18 @@ backend:
         agent: "main"
         comment: "✅ SMTP authentication başarılı! Test e-postası gönderildi. Message ID: <866623ad-1cb2-017d-0e2f-0de2b8b3cafd@ajansit.com>"
 
+  - task: "Teklif formu e-posta gönderimi"
+    implemented: true
+    working: true
+    file: "email-service.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ Teklif formu e-posta gönderimi başarılı! Message ID: <571d6135-a2a8-ba1b-46ac-b76c6213e661@ajansit.com>"
+
   - task: "Systemd servis entegrasyonu"
     implemented: false
     working: "NA"
