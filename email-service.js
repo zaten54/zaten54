@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 // SMTP Configuration using external SMTP server
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: 'mail.ajansit.com',
   port: 587,
   secure: false, // true for 465, false for other ports
