@@ -179,11 +179,9 @@ metadata:
 
 test_plan:
   current_focus:
-    - "E-posta servisi API düzeltmesi"
     - "SMTP bağlantısı test edilmesi"
-    - "Teklif formu modal entegrasyonu"
   stuck_tasks:
-    - "Systemd servis entegrasyonu"
+    - "SMTP bağlantısı test edilmesi"
   test_all: false
   test_priority: "high_first"
 
