@@ -107,35 +107,44 @@ backend:
     file: "email-service.js"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "nodemailer.createTransporter -> nodemailer.createTransport düzeltmesi yapıldı. Servis port 3001'de çalışıyor."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Email service API is working correctly. Health check endpoint (/api/health) returns OK status. Quote email endpoint (/api/send-quote-email) properly validates input data and rejects invalid requests with 400 status. Service is running on port 3001 as expected."
         
   - task: "SMTP bağlantısı test edilmesi"
     implemented: true
-    working: true
+    working: false
     file: "email-service.js"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
         comment: "SMTP bağlantısı mail.ajansit.com:587 üzerinden çalışıyor. Health check /api/health endpoint'i aktif."
+      - working: false
+        agent: "testing"
+        comment: "❌ TESTED: SMTP server mail.ajansit.com:587 is not reachable from container environment. Connection timeouts occur when trying to send actual emails. Email service logs show 'ETIMEDOUT' errors. This is a network connectivity issue - the SMTP server cannot be reached from this container."
 
   - task: "Systemd servis entegrasyonu"
     implemented: false
-    working: false
+    working: "NA"
     file: "systemd service file"
     stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: false
         agent: "main"
         comment: "Docker container içinde systemd kullanılamıyor. E-posta servisi şu anda node process olarak çalışıyor."
+      - working: "NA"
+        agent: "testing"
+        comment: "✅ CONFIRMED: Systemd is not available in Docker containers. Email service is running as a node process (PID 659) which is the correct approach for containerized environments. This is not a failure but the expected behavior."
 
 frontend:
   - task: "Ana sayfa görüntüleme"
