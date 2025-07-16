@@ -17,8 +17,14 @@ const transporter = nodemailer.createTransport({
     pass: 'c528d2Bf1'
   },
   tls: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+    ciphers: 'SSLv3'
+  },
+  connectionTimeout: 60000, // 60 seconds
+  greetingTimeout: 30000, // 30 seconds  
+  socketTimeout: 60000, // 60 seconds
+  debug: true, // Enable debug logging
+  logger: true // Enable logging
 });
 
 // Test SMTP connection
